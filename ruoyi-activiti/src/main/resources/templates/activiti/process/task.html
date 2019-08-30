@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<th:block th:include="include :: header('待办任务列表')" />
+</head>
+<body class="gray-bg">
+    <div class="container-div">
+		<div class="row">
+			<div class="col-sm-12 search-collapse">
+				<form id="notice-form">
+					<div class="select-list">
+						<ul>
+							<li>
+								节点名称：<input type="text" name="name"/>
+							</li>
+							<li>
+								<a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+								<a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+							</li>
+						</ul>
+					</div>
+				</form>
+			</div>
+			
+	        <div class="col-sm-12 select-table table-striped">
+	            <table id="bootstrap-table" data-mobile-responsive="true"></table>
+	        </div>
+    	</div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        $(function() {
+            var options = {
+                url: ctx + "activiti/process/taskList",
+                columns: [
+				{
+					field : 'id',
+					title : '序号'
+				},
+				{
+					field: 'createTime',
+					title: '任务接收时间',
+					align: 'center'
+				},
+				{
+					field : 'name',
+					title : '任务名称'
+				},
+				{
+					field : 'procName',
+					title : '流程名称'
+				},
+				{
+					field : 'startUserId',
+					title : '发起人'
+				},
+				{
+					field : 'startTime',
+					title : '发起时间'
+				},
+				{
+					title: '操作',
+					align: 'center',
+					formatter: function (value, row, index) {
+						var actions = [];
+                        actions.push('<a class="btn btn-success btn-xs" href="#" onclick="complete(\'' + row.id + '\')"><i class="fa fa-edit"></i>办理</a> ');
+						return actions.join('');
+					}
+				}
+				]
+            };
+            $.table.init(options);
+        });
+        function complete(id) {
+            var url = ctx + "activiti/process/completeForm/"+id;
+            $.modal.open("办理任务", url);
+        }
+    </script>
+</body>
+</html>

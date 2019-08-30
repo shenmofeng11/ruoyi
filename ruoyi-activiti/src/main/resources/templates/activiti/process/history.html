@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<th:block th:include="include :: header('历史流程列表')" />
+</head>
+<body class="gray-bg">
+    <div class="container-div">
+		<div class="row">
+			<div class="col-sm-12 search-collapse">
+				<form id="notice-form">
+					<div class="select-list">
+						<ul>
+							<li>
+								流程名称：<input type="text" name="name"/>
+							</li>
+							<li>
+								<a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+								<a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+							</li>
+						</ul>
+					</div>
+				</form>
+			</div>
+			
+	        <div class="col-sm-12 select-table table-striped">
+	            <table id="bootstrap-table" data-mobile-responsive="true"></table>
+	        </div>
+    	</div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        $(function() {
+            var options = {
+                url: ctx + "activiti/process/historyList",
+                columns: [
+				{
+					field : 'id',
+					title : '序号' 
+				},
+				{
+					field : 'name',
+					title : '流程名称'
+				},
+				{
+		            field: 'startTime',
+		            title: '发起时间',
+		            align: 'center'
+		        },
+				{
+					field: 'endTime',
+					title: '结束时间',
+					align: 'center'
+				},
+				{
+					title: '操作',
+					align: 'center',
+					formatter: function(value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="btn btn-primary btn-xs" href="#" onclick="getFlowImg(\'' + row.processDefinitionId + '\',\''+row.processInstanceId+'\',\''+row.name+'\')"><i class="fa fa-play-circle-o"></i>跟踪流程</a> ');
+                        actions.push('<a class="btn btn-danger btn-xs" href="#" onclick="deleteProcess(\''+row.processInstanceId+'\')"><i class="fa fa-remove"></i>删除</a>');
+                        return actions.join('');
+					}
+				}]
+            };
+            $.table.init(options);
+        });
+
+		function getFlowImg(processDefinitionId,processInstanceId,name){
+            $.modal.openTab(name, ctx+'activiti/process/toFlowImg?processDefinitionId='+processDefinitionId+'&processInstanceId='+processInstanceId);
+		}
+		
+		function deleteProcess(processInstanceId) {
+            $.modal.confirm("确定删除吗？", function() {
+                $.operate.get(ctx+'activiti/process/deleteProcess?processInstanceId='+processInstanceId);
+            });
+        }
+    </script>
+</body>
+</html>

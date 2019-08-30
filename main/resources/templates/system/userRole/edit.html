@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+	<th:block th:include="include :: header('修改用户和角色关联')" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-userRole-edit" th:object="${userRole}">
+            <input id="userId" name="userId" th:field="*{userId}"  type="hidden">
+			<div class="form-group">	
+				<label class="col-sm-3 control-label">角色ID：</label>
+				<div class="col-sm-8">
+					<input id="roleId" name="roleId" th:field="*{roleId}" class="form-control" type="text">
+				</div>
+			</div>
+		</form>
+    </div>
+    <div th:include="include::footer"></div>
+    <script type="text/javascript">
+		var prefix = ctx + "system/userRole";
+		$("#form-userRole-edit").validate({
+			rules:{
+				xxxx:{
+					required:true,
+				},
+			},
+			focusCleanup: true
+		});
+		
+		function submitHandler() {
+	        if ($.validate.form()) {
+	            $.operate.save(prefix + "/edit", $('#form-userRole-edit').serialize());
+	        }
+	    }
+	</script>
+</body>
+</html>

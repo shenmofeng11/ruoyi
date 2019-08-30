@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: select2-css" />
+	<th:block th:include="include :: header('自定义表单')" />
+</head>
+<body>
+    <div class="form-content">
+        <form id="form" method="post">
+            <!--设置隐藏域，统一处理-->
+            <input type="hidden" name="data" id="data"/>
+            <input type="hidden" name="taskId" th:value="${task.id}"/>
+            <input type="hidden" name="procDefId" th:value="${pi.processDefinitionId}"/>
+            <input type="hidden" name="procInsId" th:value="${pi.processInstanceId}"/>
+            <div class="row form-group" th:each="prop:${list}">
+                <div class="col-md-1 align-right"><p th:text="${prop.name}" ></p></div>
+                <div class="col-md-7">
+                    <div th:if="${prop.type.name=='string'}">
+                        <input  type="text" th:id="${prop.id}" th:name="${prop.id}" th:value="${prop.value}" th:zh="${prop.name}"
+                                class="width-100 form-control"  />
+                    </div>
+                    <div th:if="${prop.type.name=='date'}">
+                        <div class="input-group">
+                            <input  type="text" th:id="${prop.id}"  th:name="${prop.id}" th:value="${prop.value}" th:zh="${prop.name}"
+                                    class="width-100 form-control date-picker-o"  data-date-format="${prop.type.getInformation('datePattern')}"/>
+
+                            <span class="input-group-addon">
+                                    <i class="fa fa-calendar bigger-110"></i>
+                                </span>
+                        </div>
+                    </div>
+                    <div th:if="${prop.type.name=='enum'}" >
+                        <select th:id="${prop.id}" th:name="${prop.id}" th:zh="${prop.name}">
+                            <option value="-1">----请选择---</option>
+                            <option th:each="item:${prop.type.getInformation('values')}" th:text="${item.value}"
+                                    th:value="${item.key}"  th:selected="${item.key==prop.value}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+	<th:block th:include="include :: footer" />
+	<th:block th:include="include :: select2-js" />
+	<script>
+        function submitHandler() {
+            var arr = [];
+            var data = document.forms['form'].elements;
+            $.each(data,function(index,item) {
+                if(typeof($(item).attr("zh"))!="undefined"){
+                    var obj = {};
+                    obj.name = $(item).attr('zh');
+                    if($(item).is("select")){
+                        obj.value = $(item).children('option:selected').text();
+                    }else{
+                        obj.value = $(item).val();
+                    }
+                    arr.push(obj);
+                }
+            });
+            $("#data").val(JSON.stringify(arr));
+            $.operate.save(ctx + "activiti/process/complete", $('#form').serialize());
+        }
+    </script>
+</body>
+</html>

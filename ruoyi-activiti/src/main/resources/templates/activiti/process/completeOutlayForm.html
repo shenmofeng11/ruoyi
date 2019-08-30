@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: select2-css" />
+    <th:block th:include="include :: header('外置表单')" />
+</head>
+<body>
+<div class="form-content">
+    <form id="form" method="post">
+        <!--设置隐藏域，统一处理-->
+        <input type="hidden" name="data" id="data"/>
+        <input type="hidden" name="taskId" th:value="${task.id}"/>
+        <input type="hidden" name="procDefId" th:value="${pi.processDefinitionId}"/>
+        <input type="hidden" name="procInsId" th:value="${pi.processInstanceId}"/>
+        <div class="row form-group" th:utext="${html}"></div>
+    </form>
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: select2-js" />
+<script>
+    function submitHandler() {
+        var arr = [];
+        var data = document.forms['form'].elements;
+        $.each(data,function(index,item) {
+            if(typeof($(item).attr("zh"))!="undefined"){
+                var obj = {};
+                obj.name = $(item).attr('zh');
+                if($(item).is("select")){
+                    obj.value = $(item).children('option:selected').text();
+                }else{
+                    obj.value = $(item).val();
+                }
+                arr.push(obj);
+            }
+        });
+        $("#data").val(JSON.stringify(arr));
+        $.operate.save(ctx + "activiti/process/complete", $('#form').serialize());
+    }
+</script>
+</body>
+</html>
