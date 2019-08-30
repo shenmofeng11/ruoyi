@@ -329,7 +329,6 @@ public class ActProcessController extends BaseController
     @GetMapping("getFormProperties")
     @ResponseBody
     public AjaxResult getFormProperties(String taskDefinitionKey, String processInstanceId)throws JsonProcessingException {
-
         List<List<HistoricVariableInstance>> listAll = new ArrayList<List<HistoricVariableInstance>>();
 
         List<HistoricTaskInstance> hisTaskList = historyService.createHistoricTaskInstanceQuery().processInstanceId(processInstanceId).taskDefinitionKey(taskDefinitionKey).list();
