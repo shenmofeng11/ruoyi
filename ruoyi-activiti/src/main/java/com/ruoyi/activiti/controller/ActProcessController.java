@@ -166,6 +166,14 @@ public class ActProcessController extends BaseController
 
     }
 
+    /**
+     * 发起流程
+     * @param procDefId
+     * @param procName
+     * @param map
+     * @param mmap
+     * @return
+     */
     @PostMapping("start")
     @ResponseBody
     public AjaxResult start(String procDefId,String procName,@RequestParam Map<String,Object> map, ModelMap mmap)
