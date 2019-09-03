@@ -101,18 +101,30 @@ $(document).ready(function(){
         $.ajax({
             url: "/activiti/process/getFormProperties?taskDefinitionKey="+contextObject.id+"&processInstanceId="+processInstanceId,
             success: function(res) {
-                $('#diagramInfo').html('');
-                for(var i in res.data){
-                    for(var j in res.data[i]){
-                        if(res.data[i][j].name=='data'){
-                            var jsonObj = JSON.parse( res.data[i][j].value );
-                            for(var x in jsonObj){
-                                var div = '<div><b>'+jsonObj[x].name+'</b>: '+jsonObj[x].value+'</div>';
-                                $('#diagramInfo').append(div);
+                if(res.data.length > 0){
+                    $('#diagramInfo').html('');
+                    for(var i in res.data){
+                        for(var j in res.data[i].list){
+                            if(res.data[i].list[j].name=='data'){
+                                var jsonObj = JSON.parse( res.data[i].list[j].value );
+                                for(var x in jsonObj){
+                                    var div = '<div><b>'+jsonObj[x].name+'</b>: '+jsonObj[x].value+'</div>';
+                                    $('#diagramInfo').append(div);
+                                }
                             }
                         }
+                        $('#diagramInfo').append('<div><b>审批人</b>: '+res.data[i].task.assignee+'</div>');
+                        $('#diagramInfo').append('<div><b>审批时间</b>: '+res.data[i].task.endTime+'</div>');
+                        $('#diagramInfo').append('<hr></hr>');
                     }
-                    $('#diagramInfo').append('<hr></hr>');
+                    $("#diagramInfo").css({
+                        "top": element.attrs.y + element.attrs.height * 2 + "px",
+                        "left": element.attrs.x + element.attrs.width + "px",
+                        position: "absolute",
+                        backgroundColor: "#FDF5E6",
+                        border: "1px solid rgb(148, 157, 173)",
+                        borderRadius: "10px"
+                    }).show("fast");
                 }
             }
         })
@@ -122,6 +134,7 @@ $(document).ready(function(){
         //console.log("[OUT] mouseEvent: %o, canvas: %o, clicked element: %o, contextObject: %o", mouseEvent, canvas, element, contextObject);
 
         ProcessDiagramGenerator.hideInfo();
+        $("#diagramInfo").hide();
       }
     }
   };

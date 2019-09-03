@@ -1008,12 +1008,12 @@ ProcessDiagramCanvas.prototype = {
 		}).dblclick(function(){
 			console.log("!!! DOUBLE CLICK !!!");
 		}).hover(function (mouseEvent) {
-			var instance = this;
+			/*var instance = this;
 			var objectId = instance.data("objectId");
 			var object = this.paper.getById(objectId);
 			var contextObject = object.data("contextObject");
 			if (contextObject)
-				ProcessDiagramGenerator.showFlowInfo(contextObject);
+				ProcessDiagramGenerator.showFlowInfo(contextObject);*/
 		});
 		polyClone.data("parentId", uuid);
 		
@@ -1265,7 +1265,7 @@ ProcessDiagramCanvas.prototype = {
 		// white shaddow
 		this.drawShaddow(shape);
 		
-		
+
 		if (thickBorder) {
 			shape.attr({"stroke-width": THICK_TASK_BORDER_STROKE});
 		} else {
