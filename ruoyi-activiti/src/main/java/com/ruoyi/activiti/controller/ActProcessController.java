@@ -41,7 +41,7 @@ import java.util.Map;
 
 /**
  * 流程管理 操作处理
- * 
+ *
  * @author ruoyi
  */
 @Controller
@@ -116,7 +116,7 @@ public class ActProcessController extends BaseController
 
     @GetMapping(value = "/resource/{imageName}/{deploymentId}")
     public void viewImage(@PathVariable("imageName") String imageName,
-            @PathVariable("deploymentId") String deploymentId, HttpServletResponse response)
+                          @PathVariable("deploymentId") String deploymentId, HttpServletResponse response)
     {
         try
         {
@@ -154,10 +154,16 @@ public class ActProcessController extends BaseController
         ProcessDefinition pd = startFormData.getProcessDefinition();
         mmap.put("pd", pd);
         if(pd.hasStartFormKey()){//判断是不是有外置表单
-            //有外置表单情况下,拿取启动的表单数据
-            Object renderedStartForm = formService.getRenderedStartForm(procDefId);//返回的纯文本的html代码。
-            mmap.put("html", renderedStartForm);
-            return prefix + "/startOutlayForm";
+            if(startFormData.getFormKey().contains(".form")) {
+                //有外置表单情况下,拿取启动的表单数据
+                Object renderedStartForm = formService.getRenderedStartForm(procDefId);//返回的纯文本的html代码。
+                mmap.put("html", renderedStartForm);
+                return prefix + "/startOutlayForm";
+            }else {//普通表单 直接返回formKey
+                mmap.put("sysUser", ShiroUtils.getSysUser());
+                return startFormData.getFormKey();
+            }
+
         }else{//自定义表单
             List<FormProperty> formProperties = startFormData.getFormProperties();
             mmap.put("list", formProperties);
@@ -274,9 +280,14 @@ public class ActProcessController extends BaseController
         mmap.put("task", task);
         mmap.put("pi", pi);
         if(taskFormData.getFormKey() != null){//判断是不是有外置表单
-            Object renderedStartForm = formService.getRenderedTaskForm(id);
-            mmap.put("html", renderedStartForm);
-            return prefix + "/completeOutlayForm";
+            if(taskFormData.getFormKey().contains(".form")) {
+                Object renderedStartForm = formService.getRenderedTaskForm(id);
+                mmap.put("html", renderedStartForm);
+                return prefix + "/completeOutlayForm";
+            }else {//普通表单 直接返回formKey
+                mmap.put("sysUser", ShiroUtils.getSysUser());
+                return taskFormData.getFormKey();
+            }
         }else{//自定义表单
             List<FormProperty> list = taskFormData.getFormProperties();
             mmap.put("list", list);
